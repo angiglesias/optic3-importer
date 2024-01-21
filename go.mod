@@ -3,6 +3,7 @@ module github.com/angiglesias/optic3-importer
 go 1.21.4
 
 require (
+	github.com/jszwec/csvutil v1.9.0
 	github.com/stretchr/testify v1.8.4
 	github.com/subchen/go-xmldom v1.1.2
 )
