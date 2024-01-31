@@ -80,6 +80,10 @@ func (d *Date) UnmarshalText(text []byte) error {
 	return nil
 }
 
+func (d Date) Time() time.Time {
+	return time.Time(d)
+}
+
 type Hour time.Time
 
 const hourFmt = "15:04:05"
@@ -104,4 +108,8 @@ func (h *Hour) UnmarshalText(text []byte) error {
 
 	*h = Hour(t)
 	return nil
+}
+
+func (d Hour) Time() time.Time {
+	return time.Time(d)
 }
