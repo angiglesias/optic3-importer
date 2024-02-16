@@ -1,4 +1,4 @@
-package opticconvert
+package optic3importer
 
 import (
 	"encoding/csv"
@@ -17,6 +17,10 @@ import (
 
 type mantisConverter struct {
 	cfg Config
+}
+
+func NewMantisConverter(cfg Config) Converter {
+	return &mantisConverter{cfg: cfg}
 }
 
 func (m *mantisConverter) Parse(data io.Reader) (alge.Meet, error) {

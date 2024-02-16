@@ -1,4 +1,4 @@
-package opticconvert
+package optic3importer
 
 import (
 	"io"
