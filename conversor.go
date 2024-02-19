@@ -15,6 +15,7 @@ type Converter interface {
 }
 
 type Config struct {
-	ExtendedHeatName bool
-	GroupDays        bool
+	IncludeIndexInHeatName bool
+	ExtendedHeatName       bool
+	GroupDays              bool
 }

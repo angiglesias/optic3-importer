@@ -6,6 +6,7 @@ import (
 	"io"
 	"slices"
 	"sort"
+	"strings"
 	"time"
 
 	"github.com/angiglesias/optic3-importer/pkg/alge"
@@ -50,11 +51,20 @@ func (m *mantisConverter) Convert(series []mantis.Heat) (alge.Meet, error) {
 	return m.simpleConversion(series)
 }
 
-func (m *mantisConverter) heatName(h mantis.Heat) string {
-	if m.cfg.ExtendedHeatName {
-		return h.Event.String() + " | " + h.Series.String()
+func (m *mantisConverter) heatName(h mantis.Heat, idx int) string {
+	var buf strings.Builder
+
+	if m.cfg.IncludeIndexInHeatName {
+		buf.WriteString(fmt.Sprintf("(%d) ", idx))
 	}
-	return h.Event.String()
+
+	buf.WriteString(h.Event.String())
+
+	if m.cfg.ExtendedHeatName && len(h.Series.String()) > 0 {
+		buf.WriteString(" | " + h.Series.String())
+	}
+
+	return buf.String()
 }
 
 func (m *mantisConverter) simpleConversion(series []mantis.Heat) (alge.Meet, error) {
@@ -64,8 +74,8 @@ func (m *mantisConverter) simpleConversion(series []mantis.Heat) (alge.Meet, err
 
 	for idx, entry := range series {
 		// Fill data
-		heats[idx].Name = m.heatName(entry)
-		heats[idx].ID = m.heatName(entry)
+		heats[idx].Name = m.heatName(entry, idx+1)
+		heats[idx].ID = heats[idx].Name
 		heats[idx].Start = alge.StartTime(entry.DateFields.Time())
 		heats[idx].Number = idx + 1
 	}
