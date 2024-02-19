@@ -12,15 +12,17 @@ import (
 )
 
 var (
-	extendedNames bool
-	groupedDays   bool
-	sourceFile    string
-	outputFile    string
+	includeSeriesIndex bool
+	extendedNames      bool
+	groupedDays        bool
+	sourceFile         string
+	outputFile         string
 )
 
 func init() {
-	pflag.StringVarP(&outputFile, "output", "o", "", "Output XML file with conversion")
 	pflag.StringVarP(&sourceFile, "input", "i", "", "Input CSV file with data to convert")
+	pflag.StringVarP(&outputFile, "output", "o", "", "Output XML file with conversion")
+	pflag.BoolVar(&includeSeriesIndex, "inc-index", true, "Include heat order in name")
 	pflag.BoolVar(&extendedNames, "ext-names", true, "Extended file names")
 	pflag.BoolVar(&groupedDays, "grp-days", false, "Grouped days")
 	pflag.Parse()
@@ -57,7 +59,11 @@ func main() {
 	}
 	defer out.Close()
 
-	cvtConfig := optic3importer.Config{ExtendedHeatName: extendedNames, GroupDays: groupedDays}
+	cvtConfig := optic3importer.Config{
+		IncludeIndexInHeatName: includeSeriesIndex,
+		ExtendedHeatName:       extendedNames,
+		GroupDays:              groupedDays,
+	}
 	cvt := optic3importer.NewMantisConverter(cvtConfig)
 
 	meet, err := cvt.Parse(src)
