@@ -67,6 +67,10 @@ func (m *mantisConverter) heatName(h mantis.Heat, idx int) string {
 	return buf.String()
 }
 
+func (m *mantisConverter) heatId(h mantis.Heat, idx int) string {
+	return fmt.Sprintf("Serie %d", idx)
+}
+
 func (m *mantisConverter) simpleConversion(series []mantis.Heat) (alge.Meet, error) {
 	// Pre-allocate series
 	heats := make([]alge.Heat, len(series))
@@ -75,7 +79,7 @@ func (m *mantisConverter) simpleConversion(series []mantis.Heat) (alge.Meet, err
 	for idx, entry := range series {
 		// Fill data
 		heats[idx].Name = m.heatName(entry, idx+1)
-		heats[idx].ID = heats[idx].Name
+		heats[idx].ID = m.heatId(entry, idx+1)
 		heats[idx].Start = alge.StartTime(entry.DateFields.Time())
 		heats[idx].Number = idx + 1
 	}

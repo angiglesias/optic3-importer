@@ -47,25 +47,25 @@ func TestConversion(t *testing.T) {
 								Heats: []alge.Heat{
 									{
 										Name:   "H CAD-A K1 500 | Eliminatoria 1",
-										ID:     "H CAD-A K1 500 | Eliminatoria 1",
+										ID:     "Serie 1",
 										Number: 1,
 										Start:  alge.StartTime(time.Date(2023, time.November, 11, 8, 30, 0, 0, time.UTC)),
 									},
 									{
 										Name:   "H CAD-A K1 500 | Eliminatoria 2",
-										ID:     "H CAD-A K1 500 | Eliminatoria 2",
+										ID:     "Serie 2",
 										Number: 2,
 										Start:  alge.StartTime(time.Date(2023, time.November, 11, 8, 34, 0, 0, time.UTC)),
 									},
 									{
 										Name:   "H CAD-A K1 500 | Final B",
-										ID:     "H CAD-A K1 500 | Final B",
+										ID:     "Serie 3",
 										Number: 3,
 										Start:  alge.StartTime(time.Date(2023, time.November, 12, 9, 0, 0, 0, time.UTC)),
 									},
 									{
 										Name:   "H CAD-A K1 500 | Final A",
-										ID:     "H CAD-A K1 500 | Final A",
+										ID:     "Serie 4",
 										Number: 4,
 										Start:  alge.StartTime(time.Date(2023, time.November, 12, 9, 4, 0, 0, time.UTC)),
 									},
@@ -104,13 +104,13 @@ func TestConversion(t *testing.T) {
 								Heats: []alge.Heat{
 									{
 										Name:   "H CAD-A K1 500 | Eliminatoria 1",
-										ID:     "H CAD-A K1 500 | Eliminatoria 1",
+										ID:     "Serie 1",
 										Number: 1,
 										Start:  alge.StartTime(time.Date(2023, time.November, 11, 8, 30, 0, 0, time.UTC)),
 									},
 									{
 										Name:   "H CAD-A K1 500 | Eliminatoria 2",
-										ID:     "H CAD-A K1 500 | Eliminatoria 2",
+										ID:     "Serie 2",
 										Number: 2,
 										Start:  alge.StartTime(time.Date(2023, time.November, 11, 8, 34, 0, 0, time.UTC)),
 									},
@@ -131,13 +131,13 @@ func TestConversion(t *testing.T) {
 								Heats: []alge.Heat{
 									{
 										Name:   "H CAD-A K1 500 | Final B",
-										ID:     "H CAD-A K1 500 | Final B",
+										ID:     "Serie 3",
 										Number: 3,
 										Start:  alge.StartTime(time.Date(2023, time.November, 12, 9, 0, 0, 0, time.UTC)),
 									},
 									{
 										Name:   "H CAD-A K1 500 | Final A",
-										ID:     "H CAD-A K1 500 | Final A",
+										ID:     "Serie 4",
 										Number: 4,
 										Start:  alge.StartTime(time.Date(2023, time.November, 12, 9, 4, 0, 0, time.UTC)),
 									},
@@ -176,13 +176,13 @@ func TestConversion(t *testing.T) {
 								Heats: []alge.Heat{
 									{
 										Name:   "(1) H CAD-A K1 500 | Eliminatoria 1",
-										ID:     "(1) H CAD-A K1 500 | Eliminatoria 1",
+										ID:     "Serie 1",
 										Number: 1,
 										Start:  alge.StartTime(time.Date(2023, time.November, 11, 8, 30, 0, 0, time.UTC)),
 									},
 									{
 										Name:   "(2) H CAD-A K1 500 | Eliminatoria 2",
-										ID:     "(2) H CAD-A K1 500 | Eliminatoria 2",
+										ID:     "Serie 2",
 										Number: 2,
 										Start:  alge.StartTime(time.Date(2023, time.November, 11, 8, 34, 0, 0, time.UTC)),
 									},
@@ -203,13 +203,13 @@ func TestConversion(t *testing.T) {
 								Heats: []alge.Heat{
 									{
 										Name:   "(3) H CAD-A K1 500 | Final B",
-										ID:     "(3) H CAD-A K1 500 | Final B",
+										ID:     "Serie 3",
 										Number: 3,
 										Start:  alge.StartTime(time.Date(2023, time.November, 12, 9, 0, 0, 0, time.UTC)),
 									},
 									{
 										Name:   "(4) H CAD-A K1 500 | Final A",
-										ID:     "(4) H CAD-A K1 500 | Final A",
+										ID:     "Serie 4",
 										Number: 4,
 										Start:  alge.StartTime(time.Date(2023, time.November, 12, 9, 4, 0, 0, time.UTC)),
 									},
@@ -242,13 +242,13 @@ func TestConversion(t *testing.T) {
 								Heats: []alge.Heat{
 									{
 										Name:   "H CAD-A K1 500",
-										ID:     "H CAD-A K1 500",
+										ID:     "Serie 1",
 										Number: 1,
 										Start:  alge.StartTime(time.Date(2023, time.November, 11, 8, 30, 0, 0, time.UTC)),
 									},
 									{
 										Name:   "H CAD-A K1 500",
-										ID:     "H CAD-A K1 500",
+										ID:     "Serie 2",
 										Number: 2,
 										Start:  alge.StartTime(time.Date(2023, time.November, 11, 8, 34, 0, 0, time.UTC)),
 									},
