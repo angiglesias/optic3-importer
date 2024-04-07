@@ -24,10 +24,10 @@ func NewMantisConverter(cfg Config) Converter {
 	return &mantisConverter{cfg: cfg}
 }
 
-func (m *mantisConverter) Parse(data io.Reader) (alge.Meet, error) {
+func (m *mantisConverter) Parse(data io.Reader) ([]alge.Meet, error) {
 	series, err := m.parseCsvStream(data)
 	if err != nil {
-		return alge.Meet{}, err
+		return nil, err
 	}
 	return m.Convert(series)
 }
@@ -47,7 +47,7 @@ func (m *mantisConverter) parseCsvStream(data io.Reader) ([]mantis.Heat, error) 
 	return heats, nil
 }
 
-func (m *mantisConverter) Convert(series []mantis.Heat) (alge.Meet, error) {
+func (m *mantisConverter) Convert(series []mantis.Heat) ([]alge.Meet, error) {
 	return m.simpleConversion(series)
 }
 
@@ -71,10 +71,10 @@ func (m *mantisConverter) heatId(h mantis.Heat, idx int) string {
 	return fmt.Sprintf("Serie %d", idx)
 }
 
-func (m *mantisConverter) simpleConversion(series []mantis.Heat) (alge.Meet, error) {
+func (m *mantisConverter) simpleConversion(series []mantis.Heat) ([]alge.Meet, error) {
 	// Pre-allocate series
 	heats := make([]alge.Heat, len(series))
-	meet := alge.Meet{}
+	meets := make([]alge.Meet, 0)
 
 	for idx, entry := range series {
 		// Fill data
@@ -84,60 +84,77 @@ func (m *mantisConverter) simpleConversion(series []mantis.Heat) (alge.Meet, err
 		heats[idx].Number = idx + 1
 	}
 
-	if m.cfg.GroupDays {
-		days := make(map[time.Time]alge.Session)
-		dayCtr := 1
-
-		for i, h := range series {
-			d, ok := days[h.Date.Time()]
-			if !ok {
-				d = alge.Session{
-					Date:   alge.Date(h.DateFields.Time()),
-					Number: dayCtr,
-					Name:   fmt.Sprintf("Día %d", len(days)+1),
-					ID:     fmt.Sprintf("Día %d", len(days)+1),
-					Events: []alge.Event{
-						{
-							Name:   "Carreiras",
-							ID:     "Carreiras",
-							Number: 1,
+	if m.cfg.GroupDays == None {
+		// Create only session containing all events
+		return []alge.Meet{
+			{
+				Sessions: []alge.Session{
+					{
+						Date:   alge.Date(series[0].DateFields.Time()),
+						Number: 1,
+						Name:   "Sesións",
+						ID:     "Sesións",
+						Events: []alge.Event{
+							{
+								Name:   "Carreiras",
+								ID:     "Carreiras",
+								Number: 1,
+								Heats:  heats,
+							},
 						},
 					},
-				}
-				dayCtr++
-			}
+				},
+			},
+		}, nil
+	}
 
-			// Add heats to event
-			d.Events[0].Heats = slices.Insert(d.Events[0].Heats, len(d.Events[0].Heats), heats[i])
-			days[h.Date.Time()] = d
+	days := make(map[time.Time]alge.Session)
+	dayCtr := 1
+
+	for i, h := range series {
+		d, ok := days[h.Date.Time()]
+		if !ok {
+			d = alge.Session{
+				Date:   alge.Date(h.DateFields.Time()),
+				Number: dayCtr,
+				Name:   fmt.Sprintf("Día %d", len(days)+1),
+				ID:     fmt.Sprintf("Día %d", len(days)+1),
+				Events: []alge.Event{
+					{
+						Name:   "Carreiras",
+						ID:     "Carreiras",
+						Number: 1,
+					},
+				},
+			}
+			dayCtr++
 		}
 
-		// fill meeting (sorted by day)
-		keys := maps.Keys(days)
-		sort.Slice(keys, func(i, j int) bool { return keys[i].Before(keys[j]) })
+		// Add heats to event
+		d.Events[0].Heats = slices.Insert(d.Events[0].Heats, len(d.Events[0].Heats), heats[i])
+		days[h.Date.Time()] = d
+	}
+
+	// fill meeting (sorted by day)
+	keys := maps.Keys(days)
+	sort.Slice(keys, func(i, j int) bool { return keys[i].Before(keys[j]) })
+
+	switch m.cfg.GroupDays {
+	case SingleFile:
+		meet := alge.Meet{}
 		for _, day := range keys {
 			meet.Sessions = slices.Insert(meet.Sessions, len(meet.Sessions), days[day])
 		}
-	} else {
-		// Create only session containing all events
-		d := alge.Session{
-			Date:   alge.Date(series[0].DateFields.Time()),
-			Number: 1,
-			Name:   "Sesións",
-			ID:     "Sesións",
-			Events: []alge.Event{
-				{
-					Name:   "Carreiras",
-					ID:     "Carreiras",
-					Number: 1,
-					Heats:  heats,
-				},
-			},
+		meets = append(meets, meet)
+	case MultiFile:
+		for _, day := range keys {
+			meet := alge.Meet{}
+			meet.Sessions = slices.Insert(meet.Sessions, len(meet.Sessions), days[day])
+			meets = append(meets, meet)
 		}
-
-		// Add session to meet
-		meet.Sessions = slices.Insert(meet.Sessions, len(meet.Sessions), d)
+	default:
+		return nil, fmt.Errorf("Not Implemented support fot this grouping")
 	}
 
-	return meet, nil
+	return meets, nil
 }

@@ -17,13 +17,13 @@ func TestConversion(t *testing.T) {
 		settings Config
 		name     string
 		data     string
-		result   alge.Meet
+		result   []alge.Meet
 	}{
 		{
 			settings: Config{
 				IncludeIndexInHeatName: false,
 				ExtendedHeatName:       true,
-				GroupDays:              false,
+				GroupDays:              None,
 			},
 			name: "plain conversion",
 			data: `Fecha;Hora;Prueba;Fase;Serie;Observaciones
@@ -32,42 +32,44 @@ func TestConversion(t *testing.T) {
 12/11/2023; 09:00:00; H CAD-A K1 500; Final; Final B; 
 12/11/2023; 09:04:00; H CAD-A K1 500; Final; Final A; 
 `,
-			result: alge.Meet{
-				Sessions: []alge.Session{
-					{
-						Date:   alge.Date(time.Date(2023, time.November, 11, 8, 30, 0, 0, time.UTC)),
-						Name:   "Sesións",
-						ID:     "Sesións",
-						Number: 1,
-						Events: []alge.Event{
-							{
-								Name:   "Carreiras",
-								ID:     "Carreiras",
-								Number: 1,
-								Heats: []alge.Heat{
-									{
-										Name:   "H CAD-A K1 500 | Eliminatoria 1",
-										ID:     "Serie 1",
-										Number: 1,
-										Start:  alge.StartTime(time.Date(2023, time.November, 11, 8, 30, 0, 0, time.UTC)),
-									},
-									{
-										Name:   "H CAD-A K1 500 | Eliminatoria 2",
-										ID:     "Serie 2",
-										Number: 2,
-										Start:  alge.StartTime(time.Date(2023, time.November, 11, 8, 34, 0, 0, time.UTC)),
-									},
-									{
-										Name:   "H CAD-A K1 500 | Final B",
-										ID:     "Serie 3",
-										Number: 3,
-										Start:  alge.StartTime(time.Date(2023, time.November, 12, 9, 0, 0, 0, time.UTC)),
-									},
-									{
-										Name:   "H CAD-A K1 500 | Final A",
-										ID:     "Serie 4",
-										Number: 4,
-										Start:  alge.StartTime(time.Date(2023, time.November, 12, 9, 4, 0, 0, time.UTC)),
+			result: []alge.Meet{
+				{
+					Sessions: []alge.Session{
+						{
+							Date:   alge.Date(time.Date(2023, time.November, 11, 8, 30, 0, 0, time.UTC)),
+							Name:   "Sesións",
+							ID:     "Sesións",
+							Number: 1,
+							Events: []alge.Event{
+								{
+									Name:   "Carreiras",
+									ID:     "Carreiras",
+									Number: 1,
+									Heats: []alge.Heat{
+										{
+											Name:   "H CAD-A K1 500 | Eliminatoria 1",
+											ID:     "Serie 1",
+											Number: 1,
+											Start:  alge.StartTime(time.Date(2023, time.November, 11, 8, 30, 0, 0, time.UTC)),
+										},
+										{
+											Name:   "H CAD-A K1 500 | Eliminatoria 2",
+											ID:     "Serie 2",
+											Number: 2,
+											Start:  alge.StartTime(time.Date(2023, time.November, 11, 8, 34, 0, 0, time.UTC)),
+										},
+										{
+											Name:   "H CAD-A K1 500 | Final B",
+											ID:     "Serie 3",
+											Number: 3,
+											Start:  alge.StartTime(time.Date(2023, time.November, 12, 9, 0, 0, 0, time.UTC)),
+										},
+										{
+											Name:   "H CAD-A K1 500 | Final A",
+											ID:     "Serie 4",
+											Number: 4,
+											Start:  alge.StartTime(time.Date(2023, time.November, 12, 9, 4, 0, 0, time.UTC)),
+										},
 									},
 								},
 							},
@@ -80,7 +82,7 @@ func TestConversion(t *testing.T) {
 			settings: Config{
 				IncludeIndexInHeatName: false,
 				ExtendedHeatName:       true,
-				GroupDays:              true,
+				GroupDays:              SingleFile,
 			},
 			name: "grouped days",
 			data: `Fecha;Hora;Prueba;Fase;Serie;Observaciones
@@ -89,57 +91,59 @@ func TestConversion(t *testing.T) {
 12/11/2023; 09:00:00; H CAD-A K1 500; Final; Final B; 
 12/11/2023; 09:04:00; H CAD-A K1 500; Final; Final A; 
 `,
-			result: alge.Meet{
-				Sessions: []alge.Session{
-					{
-						Date:   alge.Date(time.Date(2023, time.November, 11, 8, 30, 0, 0, time.UTC)),
-						Name:   "Día 1",
-						ID:     "Día 1",
-						Number: 1,
-						Events: []alge.Event{
-							{
-								Name:   "Carreiras",
-								ID:     "Carreiras",
-								Number: 1,
-								Heats: []alge.Heat{
-									{
-										Name:   "H CAD-A K1 500 | Eliminatoria 1",
-										ID:     "Serie 1",
-										Number: 1,
-										Start:  alge.StartTime(time.Date(2023, time.November, 11, 8, 30, 0, 0, time.UTC)),
-									},
-									{
-										Name:   "H CAD-A K1 500 | Eliminatoria 2",
-										ID:     "Serie 2",
-										Number: 2,
-										Start:  alge.StartTime(time.Date(2023, time.November, 11, 8, 34, 0, 0, time.UTC)),
+			result: []alge.Meet{
+				{
+					Sessions: []alge.Session{
+						{
+							Date:   alge.Date(time.Date(2023, time.November, 11, 8, 30, 0, 0, time.UTC)),
+							Name:   "Día 1",
+							ID:     "Día 1",
+							Number: 1,
+							Events: []alge.Event{
+								{
+									Name:   "Carreiras",
+									ID:     "Carreiras",
+									Number: 1,
+									Heats: []alge.Heat{
+										{
+											Name:   "H CAD-A K1 500 | Eliminatoria 1",
+											ID:     "Serie 1",
+											Number: 1,
+											Start:  alge.StartTime(time.Date(2023, time.November, 11, 8, 30, 0, 0, time.UTC)),
+										},
+										{
+											Name:   "H CAD-A K1 500 | Eliminatoria 2",
+											ID:     "Serie 2",
+											Number: 2,
+											Start:  alge.StartTime(time.Date(2023, time.November, 11, 8, 34, 0, 0, time.UTC)),
+										},
 									},
 								},
 							},
 						},
-					},
-					{
-						Date:   alge.Date(time.Date(2023, time.November, 12, 9, 0, 0, 0, time.UTC)),
-						Name:   "Día 2",
-						ID:     "Día 2",
-						Number: 2,
-						Events: []alge.Event{
-							{
-								Name:   "Carreiras",
-								ID:     "Carreiras",
-								Number: 1,
-								Heats: []alge.Heat{
-									{
-										Name:   "H CAD-A K1 500 | Final B",
-										ID:     "Serie 3",
-										Number: 3,
-										Start:  alge.StartTime(time.Date(2023, time.November, 12, 9, 0, 0, 0, time.UTC)),
-									},
-									{
-										Name:   "H CAD-A K1 500 | Final A",
-										ID:     "Serie 4",
-										Number: 4,
-										Start:  alge.StartTime(time.Date(2023, time.November, 12, 9, 4, 0, 0, time.UTC)),
+						{
+							Date:   alge.Date(time.Date(2023, time.November, 12, 9, 0, 0, 0, time.UTC)),
+							Name:   "Día 2",
+							ID:     "Día 2",
+							Number: 2,
+							Events: []alge.Event{
+								{
+									Name:   "Carreiras",
+									ID:     "Carreiras",
+									Number: 1,
+									Heats: []alge.Heat{
+										{
+											Name:   "H CAD-A K1 500 | Final B",
+											ID:     "Serie 3",
+											Number: 3,
+											Start:  alge.StartTime(time.Date(2023, time.November, 12, 9, 0, 0, 0, time.UTC)),
+										},
+										{
+											Name:   "H CAD-A K1 500 | Final A",
+											ID:     "Serie 4",
+											Number: 4,
+											Start:  alge.StartTime(time.Date(2023, time.November, 12, 9, 4, 0, 0, time.UTC)),
+										},
 									},
 								},
 							},
@@ -152,7 +156,7 @@ func TestConversion(t *testing.T) {
 			settings: Config{
 				IncludeIndexInHeatName: true,
 				ExtendedHeatName:       true,
-				GroupDays:              true,
+				GroupDays:              SingleFile,
 			},
 			name: "grouped days + ext. names + incl. race number",
 			data: `Fecha;Hora;Prueba;Fase;Serie;Observaciones
@@ -161,57 +165,59 @@ func TestConversion(t *testing.T) {
 12/11/2023; 09:00:00; H CAD-A K1 500; Final; Final B; 
 12/11/2023; 09:04:00; H CAD-A K1 500; Final; Final A; 
 `,
-			result: alge.Meet{
-				Sessions: []alge.Session{
-					{
-						Date:   alge.Date(time.Date(2023, time.November, 11, 8, 30, 0, 0, time.UTC)),
-						Name:   "Día 1",
-						ID:     "Día 1",
-						Number: 1,
-						Events: []alge.Event{
-							{
-								Name:   "Carreiras",
-								ID:     "Carreiras",
-								Number: 1,
-								Heats: []alge.Heat{
-									{
-										Name:   "(1) H CAD-A K1 500 | Eliminatoria 1",
-										ID:     "Serie 1",
-										Number: 1,
-										Start:  alge.StartTime(time.Date(2023, time.November, 11, 8, 30, 0, 0, time.UTC)),
-									},
-									{
-										Name:   "(2) H CAD-A K1 500 | Eliminatoria 2",
-										ID:     "Serie 2",
-										Number: 2,
-										Start:  alge.StartTime(time.Date(2023, time.November, 11, 8, 34, 0, 0, time.UTC)),
+			result: []alge.Meet{
+				{
+					Sessions: []alge.Session{
+						{
+							Date:   alge.Date(time.Date(2023, time.November, 11, 8, 30, 0, 0, time.UTC)),
+							Name:   "Día 1",
+							ID:     "Día 1",
+							Number: 1,
+							Events: []alge.Event{
+								{
+									Name:   "Carreiras",
+									ID:     "Carreiras",
+									Number: 1,
+									Heats: []alge.Heat{
+										{
+											Name:   "(1) H CAD-A K1 500 | Eliminatoria 1",
+											ID:     "Serie 1",
+											Number: 1,
+											Start:  alge.StartTime(time.Date(2023, time.November, 11, 8, 30, 0, 0, time.UTC)),
+										},
+										{
+											Name:   "(2) H CAD-A K1 500 | Eliminatoria 2",
+											ID:     "Serie 2",
+											Number: 2,
+											Start:  alge.StartTime(time.Date(2023, time.November, 11, 8, 34, 0, 0, time.UTC)),
+										},
 									},
 								},
 							},
 						},
-					},
-					{
-						Date:   alge.Date(time.Date(2023, time.November, 12, 9, 0, 0, 0, time.UTC)),
-						Name:   "Día 2",
-						ID:     "Día 2",
-						Number: 2,
-						Events: []alge.Event{
-							{
-								Name:   "Carreiras",
-								ID:     "Carreiras",
-								Number: 1,
-								Heats: []alge.Heat{
-									{
-										Name:   "(3) H CAD-A K1 500 | Final B",
-										ID:     "Serie 3",
-										Number: 3,
-										Start:  alge.StartTime(time.Date(2023, time.November, 12, 9, 0, 0, 0, time.UTC)),
-									},
-									{
-										Name:   "(4) H CAD-A K1 500 | Final A",
-										ID:     "Serie 4",
-										Number: 4,
-										Start:  alge.StartTime(time.Date(2023, time.November, 12, 9, 4, 0, 0, time.UTC)),
+						{
+							Date:   alge.Date(time.Date(2023, time.November, 12, 9, 0, 0, 0, time.UTC)),
+							Name:   "Día 2",
+							ID:     "Día 2",
+							Number: 2,
+							Events: []alge.Event{
+								{
+									Name:   "Carreiras",
+									ID:     "Carreiras",
+									Number: 1,
+									Heats: []alge.Heat{
+										{
+											Name:   "(3) H CAD-A K1 500 | Final B",
+											ID:     "Serie 3",
+											Number: 3,
+											Start:  alge.StartTime(time.Date(2023, time.November, 12, 9, 0, 0, 0, time.UTC)),
+										},
+										{
+											Name:   "(4) H CAD-A K1 500 | Final A",
+											ID:     "Serie 4",
+											Number: 4,
+											Start:  alge.StartTime(time.Date(2023, time.November, 12, 9, 4, 0, 0, time.UTC)),
+										},
 									},
 								},
 							},
@@ -227,30 +233,110 @@ func TestConversion(t *testing.T) {
 			11/11/2023; 08:30:00; H CAD-A K1 500; Eliminatoria; Eliminatoria 1; 
 			11/11/2023; 08:34:00; H CAD-A K1 500; Eliminatoria; Eliminatoria 2; 
 `,
-			result: alge.Meet{
-				Sessions: []alge.Session{
-					{
-						Date:   alge.Date(time.Date(2023, time.November, 11, 8, 30, 0, 0, time.UTC)),
-						Name:   "Sesións",
-						ID:     "Sesións",
-						Number: 1,
-						Events: []alge.Event{
-							{
-								Name:   "Carreiras",
-								ID:     "Carreiras",
-								Number: 1,
-								Heats: []alge.Heat{
-									{
-										Name:   "H CAD-A K1 500",
-										ID:     "Serie 1",
-										Number: 1,
-										Start:  alge.StartTime(time.Date(2023, time.November, 11, 8, 30, 0, 0, time.UTC)),
+			result: []alge.Meet{
+				{
+					Sessions: []alge.Session{
+						{
+							Date:   alge.Date(time.Date(2023, time.November, 11, 8, 30, 0, 0, time.UTC)),
+							Name:   "Sesións",
+							ID:     "Sesións",
+							Number: 1,
+							Events: []alge.Event{
+								{
+									Name:   "Carreiras",
+									ID:     "Carreiras",
+									Number: 1,
+									Heats: []alge.Heat{
+										{
+											Name:   "H CAD-A K1 500",
+											ID:     "Serie 1",
+											Number: 1,
+											Start:  alge.StartTime(time.Date(2023, time.November, 11, 8, 30, 0, 0, time.UTC)),
+										},
+										{
+											Name:   "H CAD-A K1 500",
+											ID:     "Serie 2",
+											Number: 2,
+											Start:  alge.StartTime(time.Date(2023, time.November, 11, 8, 34, 0, 0, time.UTC)),
+										},
 									},
-									{
-										Name:   "H CAD-A K1 500",
-										ID:     "Serie 2",
-										Number: 2,
-										Start:  alge.StartTime(time.Date(2023, time.November, 11, 8, 34, 0, 0, time.UTC)),
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		{
+			settings: Config{
+				IncludeIndexInHeatName: false,
+				ExtendedHeatName:       true,
+				GroupDays:              MultiFile,
+			},
+			name: "grouped days",
+			data: `Fecha;Hora;Prueba;Fase;Serie;Observaciones
+11/11/2023; 08:30:00; H CAD-A K1 500; Eliminatoria; Eliminatoria 1; 
+11/11/2023; 08:34:00; H CAD-A K1 500; Eliminatoria; Eliminatoria 2; 
+12/11/2023; 09:00:00; H CAD-A K1 500; Final; Final B; 
+12/11/2023; 09:04:00; H CAD-A K1 500; Final; Final A; 
+`,
+			result: []alge.Meet{
+				{
+					Sessions: []alge.Session{
+						{
+							Date:   alge.Date(time.Date(2023, time.November, 11, 8, 30, 0, 0, time.UTC)),
+							Name:   "Día 1",
+							ID:     "Día 1",
+							Number: 1,
+							Events: []alge.Event{
+								{
+									Name:   "Carreiras",
+									ID:     "Carreiras",
+									Number: 1,
+									Heats: []alge.Heat{
+										{
+											Name:   "H CAD-A K1 500 | Eliminatoria 1",
+											ID:     "Serie 1",
+											Number: 1,
+											Start:  alge.StartTime(time.Date(2023, time.November, 11, 8, 30, 0, 0, time.UTC)),
+										},
+										{
+											Name:   "H CAD-A K1 500 | Eliminatoria 2",
+											ID:     "Serie 2",
+											Number: 2,
+											Start:  alge.StartTime(time.Date(2023, time.November, 11, 8, 34, 0, 0, time.UTC)),
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+				{
+					Sessions: []alge.Session{
+						{
+							Date:   alge.Date(time.Date(2023, time.November, 12, 9, 0, 0, 0, time.UTC)),
+							Name:   "Día 2",
+							ID:     "Día 2",
+							Number: 2,
+							Events: []alge.Event{
+								{
+									Name:   "Carreiras",
+									ID:     "Carreiras",
+									Number: 1,
+									Heats: []alge.Heat{
+										{
+											Name:   "H CAD-A K1 500 | Final B",
+											ID:     "Serie 3",
+											Number: 3,
+											Start:  alge.StartTime(time.Date(2023, time.November, 12, 9, 0, 0, 0, time.UTC)),
+										},
+										{
+											Name:   "H CAD-A K1 500 | Final A",
+											ID:     "Serie 4",
+											Number: 4,
+											Start:  alge.StartTime(time.Date(2023, time.November, 12, 9, 4, 0, 0, time.UTC)),
+										},
 									},
 								},
 							},
