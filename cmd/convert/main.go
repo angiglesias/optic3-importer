@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/xml"
+	"fmt"
 	"log/slog"
 	"os"
 	"path/filepath"
@@ -15,6 +16,7 @@ var (
 	includeSeriesIndex bool
 	extendedNames      bool
 	groupedDays        bool
+	multiFile          bool
 	sourceFile         string
 	outputFile         string
 )
@@ -25,6 +27,7 @@ func init() {
 	pflag.BoolVar(&includeSeriesIndex, "inc-index", true, "Include heat order in name")
 	pflag.BoolVar(&extendedNames, "ext-names", true, "Extended file names")
 	pflag.BoolVar(&groupedDays, "grp-days", false, "Grouped days")
+	pflag.BoolVar(&multiFile, "multi-file", false, "Generate multiple files (for some group values cases)")
 	pflag.Parse()
 }
 
@@ -52,35 +55,52 @@ func main() {
 	}
 	defer src.Close()
 
-	out, err := os.OpenFile(outputFile, os.O_CREATE|os.O_RDWR|os.O_TRUNC, 0644)
-	if err != nil {
-		slog.Error("Error opening output file", "out", outputFile, "error", err)
-		os.Exit(1)
-	}
-	defer out.Close()
-
 	cvtConfig := optic3importer.Config{
 		IncludeIndexInHeatName: includeSeriesIndex,
 		ExtendedHeatName:       extendedNames,
-		GroupDays:              groupedDays,
+		GroupDays:              optic3importer.None,
 	}
+
+	if groupedDays {
+		if multiFile {
+			cvtConfig.GroupDays = optic3importer.MultiFile
+		} else {
+			cvtConfig.GroupDays = optic3importer.SingleFile
+		}
+
+	}
+
 	cvt := optic3importer.NewMantisConverter(cvtConfig)
 
-	meet, err := cvt.Parse(src)
+	meets, err := cvt.Parse(src)
 	if err != nil {
 		slog.Error("Error parsing Mantis CSV file", "source", src.Name())
 		os.Exit(1)
 	}
 
-	xmlEnc := xml.NewEncoder(out)
-	defer xmlEnc.Close()
+	for i, meet := range meets {
+		outpath := outputFile
 
-	err = xmlEnc.Encode(meet)
-	if err != nil {
-		slog.Error("Error encoding output xml file", "output", out.Name())
-		os.Exit(1)
+		if len(meets) > 1 {
+			outpath = filepath.Join(filepath.Dir(outpath), strings.TrimSuffix(filepath.Base(outpath), filepath.Ext(outpath))+fmt.Sprintf("-%d", i)+filepath.Ext(outpath))
+		}
+		out, err := os.OpenFile(outpath, os.O_CREATE|os.O_RDWR|os.O_TRUNC, 0644)
+		if err != nil {
+			slog.Error("Error opening output file", "out", outpath, "error", err)
+			os.Exit(1)
+		}
+		defer out.Close()
+
+		xmlEnc := xml.NewEncoder(out)
+		defer xmlEnc.Close()
+
+		err = xmlEnc.Encode(meet)
+		if err != nil {
+			slog.Error("Error encoding output xml file", "output", out.Name())
+			os.Exit(1)
+		}
+
+		slog.Info("Converted successfully file", "src", input, "out", outpath, "grpDays", groupedDays, "multiFile", multiFile, "extNames", extendedNames)
 	}
-
-	slog.Info("Converted successfully file", "src", input, "out", outputFile, "grpDays", groupedDays, "extNames", extendedNames)
 
 }
