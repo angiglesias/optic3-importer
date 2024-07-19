@@ -14,7 +14,11 @@ type Heat struct {
 	Comments String `csv:"Observaciones"`
 }
 
-func (h Heat) Headers() [][]string {
+func (h Heat) Headers() []string {
+	return []string{"Fecha", "Hora", "Prueba", "Fase", "Serie", "Observaciones"}
+}
+
+func (h Heat) KnownHeaders() [][]string {
 	return [][]string{
 		{"Fecha", "Hora", "Prueba", "Fase", "Serie", "Observaciones"},
 		{"Data", "Hora", "Proba", "Fase", "Serie", "Observacións"},

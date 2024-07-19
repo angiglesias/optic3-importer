@@ -33,7 +33,8 @@ func (m *mantisConverter) Parse(data io.Reader) ([]alge.Meet, error) {
 }
 
 func (m *mantisConverter) parseCsvStream(data io.Reader) ([]mantis.Heat, error) {
-	knownHeaders := mantis.Heat{}.Headers()
+	knownHeaders := mantis.Heat{}.KnownHeaders()
+	defHeader := mantis.Heat{}.Headers()
 	reader := csv.NewReader(data)
 	reader.Comma = ';'
 	// discard header
@@ -43,11 +44,10 @@ func (m *mantisConverter) parseCsvStream(data io.Reader) ([]mantis.Heat, error) 
 	}
 
 	hdrMatch := false
-	hdrIdx := 0
-	for idx, candidate := range knownHeaders {
+	for _, candidate := range knownHeaders {
 		if slices.Equal(header, candidate) {
 			hdrMatch = true
-			hdrIdx = idx
+			// hdrIdx = idx
 		}
 	}
 
@@ -55,7 +55,7 @@ func (m *mantisConverter) parseCsvStream(data io.Reader) ([]mantis.Heat, error) 
 		return nil, fmt.Errorf("no compatible headers found for: %s", strings.Join(header, ","))
 	}
 
-	dec, err := csvutil.NewDecoder(reader, knownHeaders[hdrIdx]...)
+	dec, err := csvutil.NewDecoder(reader, defHeader...)
 	if err != nil {
 		return nil, err
 	}
