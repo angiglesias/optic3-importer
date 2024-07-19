@@ -85,6 +85,10 @@ func (m *mantisConverter) heatName(h mantis.Heat, idx int) string {
 		buf.WriteString(" | " + h.Series.String())
 	}
 
+	if m.cfg.IncludeHourInHeatName {
+		buf.WriteString(" | " + h.Time().Format(time.TimeOnly))
+	}
+
 	return buf.String()
 }
 

@@ -14,6 +14,7 @@ import (
 
 var (
 	includeSeriesIndex bool
+	includeSeriesHour  bool
 	extendedNames      bool
 	groupedDays        bool
 	multiFile          bool
@@ -25,6 +26,7 @@ func init() {
 	pflag.StringVarP(&sourceFile, "input", "i", "", "Input CSV file with data to convert")
 	pflag.StringVarP(&outputFile, "output", "o", "", "Output XML file with conversion")
 	pflag.BoolVar(&includeSeriesIndex, "inc-index", true, "Include heat order in name")
+	pflag.BoolVar(&includeSeriesHour, "inc-hour", false, "Include heat start time in HH:MM:SS in name")
 	pflag.BoolVar(&extendedNames, "ext-names", true, "Extended file names")
 	pflag.BoolVar(&groupedDays, "grp-days", false, "Grouped days")
 	pflag.BoolVar(&multiFile, "multi-file", false, "Generate multiple files (for some group values cases)")
@@ -57,6 +59,7 @@ func main() {
 
 	cvtConfig := optic3importer.Config{
 		IncludeIndexInHeatName: includeSeriesIndex,
+		IncludeHourInHeatName:  includeSeriesHour,
 		ExtendedHeatName:       extendedNames,
 		GroupDays:              optic3importer.None,
 	}

@@ -24,6 +24,7 @@ const (
 
 type Config struct {
 	IncludeIndexInHeatName bool
+	IncludeHourInHeatName  bool
 	ExtendedHeatName       bool
 	GroupDays              GroupDayMode
 }
